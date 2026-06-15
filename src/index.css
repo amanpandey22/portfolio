@@ -89,7 +89,7 @@ a:focus-visible, button:focus-visible {
   top: 14px;
   bottom: 14px;
   width: 1px;
-  background: rgba(0,212,170,0.12);
+  background: linear-gradient(to bottom, rgba(0,212,170,0.22), rgba(129,140,248,0.14));
 }
 .timeline-item {
   position: relative;
