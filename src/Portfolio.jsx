@@ -1,198 +1,208 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── Design tokens ─────────────────────────────────────────────────────────────
-const ACCENT      = "#00d4aa";
-const ACCENT_DIM  = "rgba(0,212,170,0.08)";
-const ACCENT_BDR  = "rgba(0,212,170,0.2)";
-const BG          = "#0a0f1e";
-const BG_CARD     = "#0d1526";
-const BG_RAISED   = "#111c32";
-const TEXT        = "#e2e8f0";
-const MUTED       = "#94a3b8";
-const BORDER      = "rgba(255,255,255,0.07)";
-const ACCENT2     = "#818cf8";
-const ACCENT2_DIM = "rgba(129,140,248,0.07)";
-const ACCENT2_BDR = "rgba(129,140,248,0.18)";
-const WARM        = "#f59e0b";
-const WARM_DIM    = "rgba(245,158,11,0.08)";
-const WARM_BDR    = "rgba(245,158,11,0.2)";
+const NAVY      = "#0a0f1e";
+const TEAL      = "#00c9a7";
+const TEAL_DIM  = "rgba(0,201,167,0.12)";
+const TEAL_BDR  = "rgba(0,201,167,0.3)";
+const AMBER     = "#f59e0b";
+const AMBER_DIM = "rgba(245,158,11,0.12)";
+const AMBER_BDR = "rgba(245,158,11,0.35)";
+const LIGHT     = "#f8f9fa";
+const WHITE     = "#ffffff";
+const INK       = "#1a1a2e";
+const MUTED     = "#6b7280";
+const BORDER    = "#e2e8f0";
+const PILL_BG   = "#f1f5f9";
+
+// Hero (dark) text colors
+const HERO_TEXT  = "#f1f5f9";
+const HERO_MUTED = "#94a3b8";
+
+// Fonts
+const HEAD = "'DM Sans', system-ui, sans-serif";
+const MONO = "'JetBrains Mono', ui-monospace, monospace";
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
-const tickerItems = [
-  "1.7M+ inventory transactions / day",
-  "noon.com · UAE · KSA · Egypt",
-  "AI image validation · <3% false positive rate",
-  "$3.5M+ monthly seller charges processed",
-  "2.4M units transferred / month",
-  "1M+ units serialized against fraud",
-  "48× faster CCTV investigation",
-  "41-member cross-functional team",
-  "98% volumetric SKU coverage",
-  "AI seller chatbot · first in noon portal",
+const metrics = [
+  { value: "1.7M+", label: "Daily transactions" },
+  { value: "$3.5M+", label: "Monthly seller charges" },
+  { value: "2.4M",  label: "Units transferred / month" },
+  { value: "$200K", label: "Annual fraud savings" },
+  { value: "41",    label: "Team members led" },
+  { value: "4",     label: "Promotions in 5 years" },
 ];
 
-const metrics = [
-  { value: "1.7M+",  label: "Daily inventory transactions" },
-  { value: "$3.5M+", label: "Monthly seller charges" },
-  { value: "2.4M",   label: "Units transferred / month" },
-  { value: "$200K",  label: "Annual fraud savings" },
-  { value: "41",     label: "Team members led" },
-  { value: "5+",     label: "Years · 4 promotions" },
+const products = [
+  {
+    title: "Fulfillment Platform Unification",
+    tag: "Operations",
+    impact: "1.7M daily transactions across noon, noon Minutes, Supermall",
+    bullets: [
+      "Unified noon, Minutes, and Supermall onto a single fulfillment stack",
+      "Eliminated the need for each business to build its own inventory layer",
+      "System processes 3.2M units across three business lines",
+    ],
+    skills: ["Platform Architecture", "SQL", "API Integration"],
+  },
+  {
+    title: "Seller Finance Infrastructure",
+    tag: "Finance",
+    impact: "$3.5M/month in automated seller charges",
+    bullets: [
+      "Built storage and outbound fee charging from scratch",
+      "Reduced manual effort by 80%, recovered 20% in previously lost revenue",
+      "Used volumetric data as billing foundation across 5–7M SKUs",
+    ],
+    skills: ["Billing Systems", "BigQuery", "Seller Marketplace"],
+  },
+  {
+    title: "AI Image Validation on After-Sale Returns",
+    tag: "AI",
+    impact: "<3% false positive rate on high-value return fraud detection",
+    bullets: [
+      "Built configurable AI validation infrastructure comparing physical items against catalog",
+      "Prompt-driven architecture — scalable to any new fulfillment validation use case",
+      "Currently applied to 5% of high-value returns; roadmap to full coverage",
+    ],
+    skills: ["AI/ML", "Prompt Engineering", "Fraud Prevention"],
+  },
+  {
+    title: "Fraud Prevention Serialization",
+    tag: "Fraud Prevention",
+    impact: "$200K/year in return fraud savings",
+    bullets: [
+      "Tamper-proof serialization flow capturing 1M+ units; 52K/month ongoing",
+      "Reduced customer return fraud rate by 5%",
+      "Eliminated barcode reprinting dependency, saving ~$55K/year separately",
+    ],
+    skills: ["Inventory Management", "Operations"],
+  },
+  {
+    title: "B2B Externalization — Salla Integration",
+    tag: "Growth",
+    impact: "~$27K USD/month in new revenue from external sellers",
+    bullets: [
+      "Enabled FBN warehouses to serve external (non-noon) sellers for the first time",
+      "Integrated with Salla, KSA's leading e-commerce platform",
+      "Infrastructure built to scale to Amazon/Shopify-level integrations",
+    ],
+    skills: ["B2B", "API Integration", "Marketplace"],
+  },
 ];
 
 const experience = [
   {
     role: "Lead Product Manager",
     period: "Feb 2025 – Present",
-    tag: "LEAD",
     current: true,
-    highlights: [
-      "Leading 41-member cross-functional team with 5 direct PM reports",
-      "B2B Externalization via Salla → ~$27K/month new revenue; built to Amazon/Shopify scale",
-      "AI Image Validation on After Sale Returns — <3% false positive rate on high-value items",
-      "AI Seller Chatbot — first full-action AI assistant in seller portal; est. NPS +3–5 points",
-      "VMS Automation & Outlier Detection — 30% fewer daily scans; projected 50% manpower savings",
-      "Batch Tracking for OTC Drugs — 450K units tracked, unlocking new product category for noon",
-      "AI-Powered CCTV Investigation — Hikvision API + AI; investigation time 2 days → 2 hours",
-      "Cross-border Chinese ERP integration in progress",
+    promoted: true,
+    bullets: [
+      "Lead a 41-person cross-functional team with 5 direct PM reports",
+      "Own the AI roadmap across fulfillment — image validation, seller chatbot, CCTV investigation",
+      "Drove B2B externalization, opening FBN warehouses to external sellers for the first time",
     ],
   },
   {
-    role: "Senior Product Manager (PM3)",
+    role: "Senior Product Manager",
     period: "Oct 2023 – Feb 2025",
-    tag: "SENIOR",
-    highlights: [
-      "Warehouse transfer system → 2.4M units/month, 10% manpower cost reduction",
-      "Stock reconciliation automation → NPS +2 points, payout TAT from years to monthly",
-      "Tamper-proof serialization → 1M+ units, 52K/month, $200K/year fraud savings",
-      "Fulfillment platform unification → 1.7M daily transactions, 3.2M units across noon, Minutes, Supermall",
+    promoted: true,
+    bullets: [
+      "Shipped tamper-proof serialization, saving $200K/year in return fraud",
+      "Built the warehouse transfer system moving 2.4M units/month",
+      "Unified noon, Minutes, and Supermall onto one fulfillment stack",
     ],
   },
   {
     role: "Product Manager 2",
     period: "Oct 2022 – Oct 2023",
-    tag: "PM2",
-    highlights: [
-      "Volumetric measurement system → 98% coverage across 5–7M SKUs",
-      "Seller finance infrastructure → $3.5M USD/month, 80% less manual effort, 20% recovered revenue",
-      "Namshi acquisition fulfillment integration",
-      "Inbound app rollout → 30% efficiency gain, 20% cost per unit reduction",
+    promoted: true,
+    bullets: [
+      "Built seller finance infrastructure charging $3.5M/month automatically",
+      "Launched volumetric measurement across 5–7M SKUs at 98% coverage",
+      "Led fulfillment integration for the Namshi acquisition",
     ],
   },
   {
     role: "Associate Product Manager",
     period: "Jun 2021 – Oct 2022",
-    tag: "APM",
-    highlights: [
-      "Seller inventory dashboard → 7.9M+ units visible, 50% fewer support tickets",
-      "Automated returns flow → ~900K units/month, 70% support load reduction",
-      "Supported roadmapping, user interviews, and product discovery",
-    ],
-  },
-];
-
-const products = [
-  {
-    title: "Fulfillment Platform Unification",
-    tag: "PLATFORM",
-    tagColor: "#4f8ef7",
-    desc: "Single inventory system shared by noon, noon Minutes, and Supermall — one platform serving three distinct business lines.",
-    metric: "1.7M", metricLabel: "daily transactions",
+    promoted: false,
     bullets: [
-      "Eliminated per-business-line infrastructure duplication",
-      "Enabled hyperlocal launches for Supermall and Minutes",
-      "Running live across UAE, KSA, and Egypt",
+      "Shipped a seller inventory dashboard surfacing 7.9M+ units",
+      "Automated the returns flow handling ~900K units/month",
+      "Supported roadmapping, user research, and product discovery",
     ],
-    skills: ["Platform Thinking", "SQL/BigQuery", "Multi-market", "Stakeholder Mgmt"],
-  },
-  {
-    title: "B2B Externalization · Salla",
-    tag: "GROWTH",
-    tagColor: "#10b981",
-    desc: "Opened FBN warehouses to external marketplace sellers. Infrastructure designed to scale to Amazon and Shopify-level integrations.",
-    metric: "~$27K", metricLabel: "/ month new revenue",
-    bullets: [
-      "Built API-based seller onboarding from scratch",
-      "Designed for future Amazon, Shopify expansion",
-      "New external revenue stream for noon FBN",
-    ],
-    skills: ["B2B", "API Integration", "Growth", "Revenue"],
-  },
-  {
-    title: "Seller Finance Infrastructure",
-    tag: "FINANCE",
-    tagColor: "#f59e0b",
-    desc: "End-to-end storage and outbound fee charging system with volumetric-based billing at $3.5M/month scale.",
-    metric: "$3.5M", metricLabel: "/ month processed",
-    bullets: [
-      "80% reduction in manual billing effort",
-      "20% previously lost revenue recovered",
-      "Automated volumetric-based charge calculation",
-    ],
-    skills: ["Finance Systems", "SQL/BigQuery", "API", "Billing"],
-  },
-  {
-    title: "Tamper-Proof Serialization",
-    tag: "FRAUD PREVENTION",
-    tagColor: "#ef4444",
-    desc: "End-to-end electronics serialization capturing serial numbers at inbound and validating at every return scan.",
-    metric: "$200K", metricLabel: "/ year fraud savings",
-    bullets: [
-      "1M+ units protected, 52K serialized per month",
-      "Tamper-evident bags with photo verification",
-      "Integrated into full returns investigation flow",
-    ],
-    skills: ["Fraud Prevention", "Serialization", "Operations", "Figma"],
-  },
-  {
-    title: "AI-Powered CCTV Investigation",
-    tag: "AI",
-    tagColor: ACCENT,
-    desc: "Hikvision API + AI image matching to auto-pull QC footage and compare against product catalog for return root cause analysis.",
-    metric: "48×", metricLabel: "faster investigation",
-    bullets: [
-      "Investigation time: 2 days → 2 hours",
-      "AI matching against product catalog images",
-      "Automated return reason tagging at scale",
-    ],
-    skills: ["AI", "Computer Vision", "API Integration", "Operations"],
   },
 ];
 
 const skillsData = {
-  Product: [
-    "Strategy & Roadmapping", "PRDs & Specs", "User Research",
-    "Stakeholder Mgmt", "OKRs & KPIs", "A/B Testing", "Platform Thinking",
+  "Product craft": [
+    "Strategy", "Roadmapping", "PRDs", "OKRs", "A/B Testing", "Platform Thinking",
   ],
-  Technical: [
-    "SQL / BigQuery", "Google Apps Script", "REST APIs",
-    "Figma", "Miro", "Jira", "Confluence", "Looker",
+  "Technical": [
+    "SQL / BigQuery", "REST APIs", "Google Apps Script", "Figma", "Miro", "Looker",
   ],
   "AI & Automation": [
-    "Claude", "Claude Code", "Gemini", "NotebookLM",
-    "Prompt Engineering", "AI Workflow Automation", "Internal Bot Development",
+    "Claude", "Claude Code", "Gemini", "NotebookLM", "Prompt Engineering", "Bot Development",
   ],
-  Domain: [
-    "E-Commerce Fulfillment", "Warehouse Ops", "Inventory Mgmt",
-    "Seller Marketplace", "Supply Chain", "Finance / Billing Systems",
+  "Domain": [
+    "E-Commerce Fulfillment", "Warehouse Ops", "Inventory Management",
+    "Seller Marketplace", "Supply Chain", "Billing Systems",
   ],
 };
 
-const contactLinks = [
-  { label: "Email", value: "ap5275@nyu.edu", href: "mailto:ap5275@nyu.edu",
-    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> },
-  { label: "LinkedIn", value: "amanpandey3322", href: "https://linkedin.com/in/amanpandey3322/",
-    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg> },
-  { label: "GitHub", value: "amanpandey22", href: "https://github.com/amanpandey22",
-    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> },
-  { label: "YouTube", value: "TL;DR Studio", href: "https://www.youtube.com/@TLDRStudio",
-    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> },
-  { label: "Hamro Katha", value: "hamrokatha.com", href: "https://hamrokatha.com",
-    icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> },
+const sideProjects = [
+  {
+    name: "TL;DR Studio",
+    icon: "play",
+    desc: "AI-generated video explainers of PM and tech articles. Built with Claude + NotebookLM.",
+    href: "https://www.youtube.com/@TLDRStudio",
+    linkLabel: "youtube.com/@TLDRStudio",
+    tags: ["Content", "AI"],
+  },
+  {
+    name: "Playground PM",
+    icon: "rocket",
+    desc: "Internal PM community at noon.com driving AI adoption. Built an automated SOP generator and AskFBN bot using Claude Code and Gemini.",
+    href: null,
+    linkLabel: null,
+    tags: ["AI Tools", "Community"],
+  },
+  {
+    name: "Hamro Katha",
+    icon: "book",
+    desc: "Subscription platform for bilingual Nepali illustrated stories for expat families. Built for my nephew — an Australian-born Nepali. Vibe-coded solo.",
+    href: "https://hamrokatha.com",
+    linkLabel: "hamrokatha.com",
+    tags: ["Founder", "EdTech"],
+  },
 ];
 
+const contactLinks = [
+  {
+    label: "Email", value: "ap5275@nyu.edu", href: "mailto:ap5275@nyu.edu",
+    icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
+  },
+  {
+    label: "LinkedIn", value: "linkedin.com/in/amanpandey3322", href: "https://linkedin.com/in/amanpandey3322/",
+    icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>,
+  },
+  {
+    label: "GitHub", value: "github.com/amanpandey22", href: "https://github.com/amanpandey22",
+    icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>,
+  },
+];
+
+// ─── Side-project icons ──────────────────────────────────────────────────────────
+function ProjectIcon({ name }) {
+  const common = { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", stroke: TEAL, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
+  if (name === "play")   return <svg {...common}><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+  if (name === "rocket") return <svg {...common}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>;
+  return <svg {...common}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
+}
+
 // ─── Hooks ─────────────────────────────────────────────────────────────────────
-function useReveal(threshold = 0.1) {
+function useReveal(threshold = 0.12) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -206,7 +216,7 @@ function useReveal(threshold = 0.1) {
   return [ref, visible];
 }
 
-// ─── Animated Counter ──────────────────────────────────────────────────────────
+// ─── Animated Counter (count-up on scroll into view) ─────────────────────────────
 function AnimatedCounter({ value }) {
   const [display, setDisplay] = useState("0");
   const [started, setStarted] = useState(false);
@@ -238,8 +248,6 @@ function AnimatedCounter({ value }) {
         ? cur.toFixed(1) + "M"
         : value.includes("K")
         ? Math.round(cur) + "K"
-        : value.includes("×") || value.includes("x")
-        ? Math.round(cur) + "×"
         : String(Math.round(cur));
       setDisplay(pre + body + suf);
     }, 22);
@@ -249,93 +257,56 @@ function AnimatedCounter({ value }) {
   return <span ref={ref}>{display}</span>;
 }
 
-// ─── Hero background ───────────────────────────────────────────────────────────
-function HeroBackground() {
+// ─── Hero flow diagram (Inbound → Warehouse → Outbound, with scan-line) ──────────
+function FlowDiagram() {
+  const stages = [
+    { y: 36,  label: "INBOUND",   sub: "receive · scan" },
+    { y: 176, label: "WAREHOUSE", sub: "store · pick" },
+    { y: 316, label: "OUTBOUND",  sub: "pack · ship" },
+  ];
   return (
-    <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-      {/* Base glows */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,212,170,0.1) 0%, transparent 60%)" }} />
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 45% at 10% 115%, rgba(245,158,11,0.1) 0%, transparent 55%)" }} />
+    <div style={{ width: "100%", maxWidth: 380, margin: "0 auto" }}>
+      <svg viewBox="0 0 320 420" width="100%" style={{ display: "block" }} role="img" aria-label="Simplified FBN fulfillment stack">
+        {/* connectors */}
+        <line className="flow-line" x1="160" y1="116" x2="160" y2="176" stroke={TEAL} strokeWidth="2" />
+        <line className="flow-line" x1="160" y1="256" x2="160" y2="316" stroke={TEAL} strokeWidth="2" />
 
-      {/* ── Logistics route map SVG ─────────────────────────────────────── */}
-      <svg
-        style={{ position: "absolute", right: 0, top: 0, width: "54%", height: "100%", opacity: 0.2, pointerEvents: "none" }}
-        viewBox="0 0 580 780"
-        fill="none"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {/* Route lines – dashed shipping lanes */}
-        <line x1="290" y1="370" x2="440" y2="230" stroke="#00d4aa" strokeWidth="1.4" strokeDasharray="6 5" />
-        <line x1="290" y1="370" x2="125" y2="275" stroke="#00d4aa" strokeWidth="1.4" strokeDasharray="6 5" />
-        <line x1="290" y1="370" x2="500" y2="460" stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="6 5" />
-        <line x1="290" y1="370" x2="175" y2="510" stroke="#818cf8" strokeWidth="1"   strokeDasharray="6 5" />
-        <line x1="290" y1="370" x2="410" y2="570" stroke="#00d4aa" strokeWidth="0.9" strokeDasharray="5 6" />
-        <line x1="290" y1="370" x2="295" y2="155" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="4 7" />
-        <line x1="440" y1="230" x2="500" y2="460" stroke="#00d4aa" strokeWidth="0.6" strokeDasharray="3 8" opacity="0.5" />
-        <line x1="125" y1="275" x2="440" y2="230" stroke="#00d4aa" strokeWidth="0.6" strokeDasharray="3 8" opacity="0.5" />
+        {/* stage boxes */}
+        {stages.map((s) => (
+          <g key={s.label}>
+            <rect x="60" y={s.y} width="200" height="80" rx="10"
+              fill="rgba(0,201,167,0.04)" stroke={TEAL} strokeWidth="1.4" strokeOpacity="0.7" />
+            <text x="160" y={s.y + 38} textAnchor="middle" fill={TEAL}
+              fontFamily="'JetBrains Mono', monospace" fontSize="15" fontWeight="500" letterSpacing="1.5">{s.label}</text>
+            <text x="160" y={s.y + 58} textAnchor="middle" fill="#5f6b7a"
+              fontFamily="'JetBrains Mono', monospace" fontSize="9.5" letterSpacing="1">{s.sub}</text>
+          </g>
+        ))}
 
-        {/* Traveling package dots */}
-        <circle r="4" fill="#00d4aa"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0s"   path="M290,370 L440,230" /></circle>
-        <circle r="3.5" fill="#00d4aa"><animateMotion dur="3.6s" repeatCount="indefinite" begin="1.2s" path="M290,370 L125,275" /></circle>
-        <circle r="3"   fill="#f59e0b"><animateMotion dur="3.2s" repeatCount="indefinite" begin="0.6s" path="M290,370 L500,460" /></circle>
-        <circle r="3"   fill="#818cf8"><animateMotion dur="4.2s" repeatCount="indefinite" begin="2s"   path="M290,370 L175,510" /></circle>
-        <circle r="2.5" fill="#00d4aa"><animateMotion dur="3.8s" repeatCount="indefinite" begin="1.8s" path="M290,370 L410,570" /></circle>
-        <circle r="2.5" fill="#f59e0b"><animateMotion dur="5s"   repeatCount="indefinite" begin="0.4s" path="M290,370 L295,155" /></circle>
+        {/* corner ticks for a technical "node" feel */}
+        {stages.map((s) => (
+          <g key={s.label + "-c"} stroke={TEAL} strokeWidth="1.4" strokeOpacity="0.55">
+            <path d={`M68 ${s.y + 8} L68 ${s.y} L76 ${s.y}`} fill="none" />
+            <path d={`M252 ${s.y + 80} L260 ${s.y + 80} L260 ${s.y + 72}`} fill="none" />
+          </g>
+        ))}
 
-        {/* Hub – DXB (Dubai, main warehouse cluster) */}
-        <circle cx="290" cy="370" r="26" stroke="#00d4aa" strokeWidth="0.8" fill="none" opacity="0.2" />
-        <circle cx="290" cy="370" r="14" stroke="#00d4aa" strokeWidth="0.8" fill="none" opacity="0.35" />
-        <circle cx="290" cy="370" r="6"  fill="#00d4aa" opacity="0.3" />
-        <circle cx="290" cy="370" r="3"  fill="#00d4aa" opacity="0.9" />
-        <text x="303" y="367" fill="#00d4aa" fontSize="10" fontFamily="monospace" fontWeight="700" opacity="0.95">DXB</text>
+        {/* scan-line sweep */}
+        <g className="scan-line">
+          <line x1="40" y1="0" x2="280" y2="0" stroke={TEAL} strokeWidth="1.5" strokeOpacity="0.9" />
+          <rect x="40" y="0" width="240" height="22" fill="url(#scanGrad)" transform="translate(0,-22)" />
+        </g>
 
-        {/* Node – RUH */}
-        <circle cx="440" cy="230" r="8" fill="#00d4aa" opacity="0.12" />
-        <circle cx="440" cy="230" r="3.5" fill="#00d4aa" opacity="0.7" />
-        <text x="452" y="227" fill="#00d4aa" fontSize="9" fontFamily="monospace" opacity="0.75">RUH</text>
-
-        {/* Node – CAI */}
-        <circle cx="125" cy="275" r="8" fill="#00d4aa" opacity="0.12" />
-        <circle cx="125" cy="275" r="3.5" fill="#00d4aa" opacity="0.7" />
-        <text x="82" y="272" fill="#00d4aa" fontSize="9" fontFamily="monospace" opacity="0.75">CAI</text>
-
-        {/* Node – MCT */}
-        <circle cx="500" cy="460" r="8" fill="#f59e0b" opacity="0.12" />
-        <circle cx="500" cy="460" r="3.5" fill="#f59e0b" opacity="0.7" />
-        <text x="512" y="457" fill="#f59e0b" fontSize="9" fontFamily="monospace" opacity="0.75">MCT</text>
-
-        {/* Node – AUH */}
-        <circle cx="175" cy="510" r="7" fill="#818cf8" opacity="0.12" />
-        <circle cx="175" cy="510" r="3" fill="#818cf8" opacity="0.7" />
-        <text x="132" y="507" fill="#818cf8" fontSize="9" fontFamily="monospace" opacity="0.75">AUH</text>
-
-        {/* Node – KWT */}
-        <circle cx="410" cy="570" r="6" fill="#00d4aa" opacity="0.1" />
-        <circle cx="410" cy="570" r="2.5" fill="#00d4aa" opacity="0.6" />
-        <text x="420" y="567" fill="#00d4aa" fontSize="8" fontFamily="monospace" opacity="0.65">KWT</text>
-
-        {/* Node – AMM */}
-        <circle cx="295" cy="155" r="6" fill="#f59e0b" opacity="0.1" />
-        <circle cx="295" cy="155" r="2.5" fill="#f59e0b" opacity="0.6" />
-        <text x="306" y="152" fill="#f59e0b" fontSize="8" fontFamily="monospace" opacity="0.65">AMM</text>
-
-        {/* Data stream watermark */}
-        <text x="45" y="610" fill="#00d4aa" fontSize="8" fontFamily="monospace" opacity="0.22">1,743,291 units · today</text>
-        <text x="45" y="630" fill="#00d4aa" fontSize="8" fontFamily="monospace" opacity="0.16">STATUS: IN TRANSIT ▶</text>
-        <text x="45" y="650" fill="#f59e0b" fontSize="8" fontFamily="monospace" opacity="0.13">BATCH: OTC-20250615-4482</text>
+        <defs>
+          <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={TEAL} stopOpacity="0" />
+            <stop offset="100%" stopColor={TEAL} stopOpacity="0.18" />
+          </linearGradient>
+        </defs>
       </svg>
-
-      {/* Subtle dot grid – sparse, left side only */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: `radial-gradient(circle, rgba(0,212,170,0.07) 1px, transparent 1px)`,
-        backgroundSize: "56px 56px",
-        maskImage: "radial-gradient(ellipse 45% 60% at 22% 45%, black 0%, transparent 75%)",
-        WebkitMaskImage: "radial-gradient(ellipse 45% 60% at 22% 45%, black 0%, transparent 75%)",
-      }} />
-
-      {/* Bottom fade */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: `linear-gradient(to bottom, transparent, ${BG})` }} />
+      <p style={{ textAlign: "center", fontSize: 11, color: HERO_MUTED, fontFamily: MONO, marginTop: 14, letterSpacing: 0.5 }}>
+        Simplified FBN fulfillment stack
+      </p>
     </div>
   );
 }
@@ -346,20 +317,23 @@ function Nav({ active, scrollTo }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const navItems = [
     { id: "about", label: "About" },
+    { id: "products", label: "Products" },
     { id: "experience", label: "Experience" },
-    { id: "work", label: "Work" },
     { id: "skills", label: "Skills" },
     { id: "contact", label: "Contact" },
   ];
 
   const handleNav = (id) => { scrollTo(id); setMobileOpen(false); };
+  const onDark = !scrolled; // transparent over dark hero, white once scrolled
+  const linkColor = onDark ? HERO_MUTED : MUTED;
+  const logoText = onDark ? HERO_TEXT : INK;
 
   return (
     <>
@@ -367,15 +341,16 @@ function Nav({ active, scrollTo }) {
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
         height: 60, padding: "0 24px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: scrolled ? "rgba(10,15,30,0.92)" : "transparent",
+        background: scrolled ? "rgba(255,255,255,0.9)" : "transparent",
         backdropFilter: scrolled ? "blur(20px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
         borderBottom: scrolled ? `1px solid ${BORDER}` : "1px solid transparent",
         transition: "background 0.3s, border-color 0.3s, backdrop-filter 0.3s",
       }}>
         {/* Logo */}
         <div onClick={() => scrollTo("hero")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 7, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: BG, letterSpacing: 0 }}>AP</div>
-          <span style={{ fontSize: 14, fontWeight: 600, color: TEXT }}>Aman Pandey</span>
+          <div style={{ width: 32, height: 32, borderRadius: 7, background: TEAL, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: NAVY, fontFamily: HEAD }}>AP</div>
+          <span style={{ fontSize: 14, fontWeight: 700, color: logoText, fontFamily: HEAD, transition: "color 0.3s" }}>Aman Pandey</span>
         </div>
 
         {/* Desktop links */}
@@ -383,21 +358,20 @@ function Nav({ active, scrollTo }) {
           {navItems.map(n => (
             <button key={n.id} onClick={() => scrollTo(n.id)} style={{
               fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: 500, padding: 0,
-              color: active === n.id ? ACCENT : MUTED,
-              borderBottom: active === n.id ? `1px solid ${ACCENT}` : "1px solid transparent",
-              paddingBottom: 2,
-              transition: "color 0.2s",
+              color: active === n.id ? TEAL : linkColor,
+              borderBottom: active === n.id ? `1px solid ${TEAL}` : "1px solid transparent",
+              paddingBottom: 2, transition: "color 0.2s",
             }}>{n.label}</button>
           ))}
-          <button onClick={() => scrollTo("contact")} style={{
-            padding: "8px 20px", background: WARM, color: BG, border: "none", borderRadius: 6,
-            fontSize: 13, fontWeight: 700, cursor: "pointer",
-          }}>Let's Talk</button>
+          <a href="/cv.pdf" download style={{
+            padding: "8px 20px", background: TEAL, color: NAVY, border: "none", borderRadius: 6,
+            fontSize: 13, fontWeight: 700, cursor: "pointer", textDecoration: "none", fontFamily: HEAD,
+          }}>Download CV</a>
         </div>
 
         {/* Hamburger */}
         <button className="hamburger" onClick={() => setMobileOpen(o => !o)} style={{
-          background: "none", border: "none", cursor: "pointer", color: TEXT,
+          background: "none", border: "none", cursor: "pointer", color: logoText,
           display: "none", padding: 4, alignItems: "center", justifyContent: "center",
         }}>
           {mobileOpen
@@ -410,54 +384,52 @@ function Nav({ active, scrollTo }) {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div style={{
-          position: "fixed", inset: 0, zIndex: 199, background: BG,
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 36,
+          position: "fixed", inset: 0, zIndex: 199, background: NAVY,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 34,
         }}>
           {navItems.map(n => (
             <button key={n.id} onClick={() => handleNav(n.id)} style={{
-              fontSize: 32, fontWeight: 700, color: TEXT, background: "none", border: "none",
-              cursor: "pointer",
+              fontSize: 30, fontWeight: 700, color: HERO_TEXT, background: "none", border: "none",
+              cursor: "pointer", fontFamily: HEAD,
             }}>{n.label}</button>
           ))}
-          <button onClick={() => handleNav("contact")} style={{
-            marginTop: 12, padding: "16px 48px", background: WARM, color: BG,
+          <a href="/cv.pdf" download onClick={() => setMobileOpen(false)} style={{
+            marginTop: 12, padding: "16px 48px", background: TEAL, color: NAVY,
             border: "none", borderRadius: 10, fontSize: 18, fontWeight: 700, cursor: "pointer",
-          }}>Let's Talk</button>
+            textDecoration: "none", fontFamily: HEAD,
+          }}>Download CV</a>
         </div>
       )}
     </>
   );
 }
 
-// ─── Section label ─────────────────────────────────────────────────────────────
-function Label({ children }) {
+// ─── Shared bits ─────────────────────────────────────────────────────────────────
+function Label({ children, color = TEAL }) {
   return (
-    <p style={{ fontSize: 11, letterSpacing: 3, fontWeight: 700, color: ACCENT, marginBottom: 16, textTransform: "uppercase" }}>
+    <p style={{ fontSize: 11, letterSpacing: 2.5, fontWeight: 500, color, marginBottom: 14, textTransform: "uppercase", fontFamily: MONO }}>
       {children}
     </p>
   );
 }
 
-// ─── Section heading ───────────────────────────────────────────────────────────
 function Heading({ children, style = {} }) {
   return (
-    <h2 style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 800, color: TEXT, lineHeight: 1.15, letterSpacing: -0.5, ...style }}>
+    <h2 style={{ fontSize: "clamp(28px,4vw,42px)", fontWeight: 700, color: INK, lineHeight: 1.12, letterSpacing: -0.8, fontFamily: HEAD, ...style }}>
       {children}
     </h2>
   );
 }
 
-// ─── Bullet row ────────────────────────────────────────────────────────────────
-function Bullet({ children }) {
+function Bullet({ children, color = TEAL }) {
   return (
-    <div style={{ display: "flex", gap: 10, fontSize: 14, color: MUTED, lineHeight: 1.65 }}>
-      <span style={{ color: ACCENT, flexShrink: 0, fontSize: 7, marginTop: 6 }}>◆</span>
+    <div style={{ display: "flex", gap: 11, fontSize: 14, color: "#475569", lineHeight: 1.6 }}>
+      <span style={{ color, flexShrink: 0, fontSize: 7, marginTop: 7 }}>●</span>
       <span>{children}</span>
     </div>
   );
 }
 
-// ─── External link icon ────────────────────────────────────────────────────────
 function ExternalIcon() {
   return (
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -465,6 +437,18 @@ function ExternalIcon() {
       <polyline points="15 3 21 3 21 9"/>
       <line x1="10" y1="14" x2="21" y2="3"/>
     </svg>
+  );
+}
+
+// Barcode-style separator
+function Barcode({ color = TEAL, opacity = 0.5 }) {
+  const widths = [2, 1, 3, 1, 2, 4, 1, 2, 1, 3, 2, 1, 4, 1, 2, 3, 1, 2, 1, 3, 2, 4, 1, 2, 1, 3, 1, 2];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 2, height: 16, opacity }} aria-hidden="true">
+      {widths.map((w, i) => (
+        <span key={i} style={{ width: w, height: "100%", background: i % 2 === 0 ? color : "transparent", display: "block" }} />
+      ))}
+    </div>
   );
 }
 
@@ -476,7 +460,7 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
-    const ids = ["hero", "about", "experience", "work", "skills", "contact"];
+    const ids = ["hero", "about", "products", "experience", "skills", "contact"];
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); }),
       { threshold: 0.3 }
@@ -485,256 +469,239 @@ export default function Portfolio() {
     return () => obs.disconnect();
   }, []);
 
-  // Reveal refs — called at top level of component, never conditionally
   const [aboutRef, aboutVis]   = useReveal();
+  const [prodRef, prodVis]     = useReveal();
   const [expRef, expVis]       = useReveal();
-  const [workRef, workVis]     = useReveal();
   const [skillsRef, skillsVis] = useReveal();
   const [projRef, projVis]     = useReveal();
-  const [ctaRef, ctaVis]       = useReveal();
 
   return (
-    <div style={{ background: BG, color: TEXT, minHeight: "100vh", fontFamily: "'Inter',system-ui,-apple-system,sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: LIGHT, color: INK, minHeight: "100vh", fontFamily: "'Inter',system-ui,-apple-system,sans-serif", overflowX: "hidden" }}>
       <Nav active={active} scrollTo={scrollTo} />
 
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section id="hero" style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", overflow: "hidden" }}>
-        <HeroBackground />
-        <div className="section-max" style={{ position: "relative", zIndex: 1, paddingTop: 100, paddingBottom: 80 }}>
-          {/* Status pill */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", borderRadius: 100, border: `1px solid ${ACCENT_BDR}`, background: ACCENT_DIM, marginBottom: 40 }}>
-            <span className="pulse-dot" style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: ACCENT }} />
-            <span style={{ fontSize: 12, color: ACCENT, fontWeight: 500, letterSpacing: 0.3 }}>Lead Product Manager · noon.com · Dubai</span>
-          </div>
+      {/* ── 1. HERO (dark) ───────────────────────────────────────────────────── */}
+      <section id="hero" style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", background: NAVY, overflow: "hidden" }}>
+        {/* ambient glows */}
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 50% at 75% 30%, rgba(0,201,167,0.12) 0%, transparent 60%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(0,201,167,0.06) 1px, transparent 1px)", backgroundSize: "52px 52px", maskImage: "radial-gradient(ellipse 60% 70% at 50% 50%, black 0%, transparent 80%)", WebkitMaskImage: "radial-gradient(ellipse 60% 70% at 50% 50%, black 0%, transparent 80%)", pointerEvents: "none" }} />
 
-          {/* Name */}
-          <h1 style={{ fontSize: "clamp(56px,9vw,100px)", fontWeight: 800, lineHeight: 0.95, letterSpacing: "-3px", background: `linear-gradient(135deg, ${ACCENT} 25%, ${ACCENT2} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: 24 }}>
-            Aman<br />Pandey.
-          </h1>
+        <div className="section-max" style={{ position: "relative", zIndex: 1, paddingTop: 110, paddingBottom: 80 }}>
+          <div className="hero-grid">
+            {/* Left */}
+            <div>
+              <p style={{ fontSize: 13, color: TEAL, fontFamily: MONO, letterSpacing: 1, marginBottom: 24 }}>
+                Lead Product Manager
+              </p>
+              <h1 style={{ fontSize: "clamp(2.4rem,5.5vw,3.6rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: -1.5, color: HERO_TEXT, fontFamily: HEAD, marginBottom: 24 }}>
+                I build the systems<br />that move millions<br />of <span style={{ color: TEAL }}>packages.</span>
+              </h1>
+              <p style={{ fontSize: "1.1rem", color: HERO_MUTED, lineHeight: 1.6, marginBottom: 36, maxWidth: 480 }}>
+                5 years at noon.com. Middle East's largest e-commerce platform.
+              </p>
 
-          {/* Sub-role */}
-          <p style={{ fontSize: "clamp(14px,1.8vw,17px)", color: MUTED, marginBottom: 20, letterSpacing: 0.2 }}>
-            E-Commerce Fulfillment &nbsp;·&nbsp; AI-Powered Operations &nbsp;·&nbsp; Scale Systems
-          </p>
+              <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 30 }}>
+                <button onClick={() => scrollTo("products")} style={{
+                  padding: "14px 30px", background: TEAL, color: NAVY, border: "none", borderRadius: 8,
+                  fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: HEAD,
+                  boxShadow: "0 0 40px rgba(0,201,167,0.25)",
+                }}>See My Work</button>
+                <a href="/cv.pdf" download style={{
+                  padding: "14px 30px", background: "transparent", color: HERO_TEXT,
+                  border: `1px solid rgba(255,255,255,0.2)`, borderRadius: 8,
+                  fontWeight: 600, fontSize: 15, textDecoration: "none",
+                  display: "inline-flex", alignItems: "center", gap: 8, fontFamily: HEAD,
+                }}>
+                  Download CV
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </a>
+              </div>
 
-          {/* Tagline */}
-          <p style={{ fontSize: "clamp(19px,2.6vw,28px)", color: TEXT, maxWidth: 520, lineHeight: 1.45, marginBottom: 52, fontWeight: 500 }}>
-            I build the systems that move millions of packages.
-          </p>
+              {/* terminal status line */}
+              <p className="hide-mobile" style={{ fontSize: 12.5, color: TEAL, fontFamily: MONO, letterSpacing: 0.3, opacity: 0.85 }}>
+                {"> "}1.7M transactions/day · 41-person team · 47% AI roadmap
+              </p>
+            </div>
 
-          {/* CTAs */}
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <button onClick={() => scrollTo("work")} style={{
-              padding: "14px 32px", background: WARM, color: BG, border: "none", borderRadius: 8,
-              fontWeight: 700, fontSize: 15, cursor: "pointer",
-              boxShadow: "0 0 40px rgba(245,158,11,0.22)",
-              transition: "box-shadow 0.2s, transform 0.2s",
-            }}>View My Work</button>
-            <a href="/cv.pdf" download style={{
-              padding: "14px 32px", background: "transparent", color: TEXT,
-              border: `1px solid ${BORDER}`, borderRadius: 8,
-              fontWeight: 600, fontSize: 15, textDecoration: "none",
-              display: "inline-flex", alignItems: "center", gap: 8,
-              transition: "border-color 0.2s",
-            }}>
-              Download CV
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            </a>
+            {/* Right — flow diagram */}
+            <div>
+              <FlowDiagram />
+            </div>
           </div>
         </div>
 
-        {/* Scroll hint */}
-        <div style={{
-          position: "absolute", bottom: 36, left: "50%",
-          animation: "bounce-arrow 1.8s ease-in-out infinite",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
-        }}>
-          <span style={{ fontSize: 10, color: MUTED, letterSpacing: 3, textTransform: "uppercase" }}>Scroll</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+        {/* scroll hint */}
+        <div style={{ position: "absolute", bottom: 30, left: "50%", animation: "bounce-arrow 1.8s ease-in-out infinite", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 10, color: HERO_MUTED, letterSpacing: 3, textTransform: "uppercase", fontFamily: MONO }}>Scroll</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={HERO_MUTED} strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
       </section>
 
-      {/* ── DATA TICKER ──────────────────────────────────────────────────── */}
-      <div style={{ overflow: "hidden", background: "rgba(0,212,170,0.03)", borderTop: `1px solid rgba(0,212,170,0.09)`, borderBottom: `1px solid rgba(0,212,170,0.09)`, padding: "11px 0" }}>
-        <div style={{ display: "flex", animation: "ticker-scroll 38s linear infinite", width: "max-content" }}>
-          {[...tickerItems, ...tickerItems].map((item, i) => (
-            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap", padding: "0 44px", fontSize: 11, color: ACCENT, fontFamily: "'SF Mono','Fira Code',monospace", letterSpacing: 0.5, fontWeight: 500 }}>
-              <span style={{ opacity: 0.4, fontSize: 7 }}>◆</span>
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── METRICS ──────────────────────────────────────────────────────────── */}
-      <div style={{ background: BG_CARD, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}`, position: "relative" }}>
-        {/* LIVE badge */}
-        <div style={{ position: "absolute", top: 14, right: 24, display: "flex", alignItems: "center", gap: 7, zIndex: 1 }}>
-          <span className="pulse-dot" style={{ display: "block", width: 6, height: 6, borderRadius: "50%", background: "#22c55e", flexShrink: 0 }} />
-          <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 700, letterSpacing: 2, fontFamily: "monospace" }}>LIVE OPS</span>
-        </div>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+      {/* ── 2. METRICS (white, dashboard) ────────────────────────────────────── */}
+      <section style={{ background: LIGHT, position: "relative" }}>
+        <div className="section-max" style={{ padding: "64px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <Barcode />
+              <span style={{ fontSize: 12, color: MUTED, fontFamily: MONO, letterSpacing: 1 }}>41 people · 1.7M transactions · one stack</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="pulse-dot" style={{ display: "block", width: 7, height: 7, borderRadius: "50%", background: "#16a34a", animation: "pulse-dot 1.8s ease-in-out infinite" }} />
+              <span style={{ fontSize: 11, color: "#16a34a", fontWeight: 700, letterSpacing: 2, fontFamily: MONO }}>LIVE OPS</span>
+            </div>
+          </div>
           <div className="metrics-grid">
             {metrics.map((m, i) => (
-              <div key={i} className="metrics-cell">
-                <div style={{ fontSize: "clamp(30px,4vw,48px)", fontWeight: 800, color: ACCENT, letterSpacing: -1, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>
+              <div key={i} className="metric-card">
+                <div style={{ fontSize: "2.2rem", fontWeight: 500, color: INK, lineHeight: 1, fontFamily: MONO, letterSpacing: -1, fontVariantNumeric: "tabular-nums" }}>
                   <AnimatedCounter value={m.value} />
                 </div>
-                <div style={{ fontSize: 12, color: MUTED, marginTop: 10, lineHeight: 1.4 }}>{m.label}</div>
+                <div style={{ fontSize: 12, color: MUTED, marginTop: 12, lineHeight: 1.4 }}>{m.label}</div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── ABOUT ────────────────────────────────────────────────────────────── */}
+      {/* ── 3. ABOUT (white) ─────────────────────────────────────────────────── */}
       <section
         id="about"
         ref={aboutRef}
         className={`reveal ${aboutVis ? "reveal-visible" : "reveal-hidden"}`}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
+        style={{ background: WHITE, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}` }}
       >
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 55% at 88% 20%, ${WARM_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
-        <div className="about-grid">
-          <div>
-            <Label>About</Label>
-            <Heading>5 years shipping infrastructure at scale.</Heading>
-          </div>
-          <div>
-            <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.9, marginBottom: 18 }}>
-              I'm a Lead Product Manager at noon.com — the Middle East's largest e-commerce platform. I progressed from APM to Lead PM in under 4 years, and currently lead a 41-member cross-functional team with 5 direct PM reports. The systems I own process 1.7M+ daily inventory transactions across UAE, KSA, and Egypt.
-            </p>
-            <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.9, marginBottom: 32 }}>
-              My work sits at the intersection of warehouse operations, seller infrastructure, and AI-powered automation. I'm hands-on daily — SQL and BigQuery, internal tooling with Apps Script, and AI prototyping with Claude and Gemini. I hold a BA in Economics with a CS minor from NYU Abu Dhabi (GPA 3.94).
-            </p>
-            <div style={{ display: "flex", gap: 16, padding: "18px 22px", background: BG_CARD, borderRadius: 10, border: `1px solid ${ACCENT_BDR}`, alignItems: "center" }}>
-              <div style={{ width: 3, height: 42, background: ACCENT, borderRadius: 2, flexShrink: 0 }} />
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: TEXT }}>NYU Abu Dhabi '21</div>
-                <div style={{ fontSize: 12, color: MUTED, marginTop: 4 }}>BA Economics · Minor Computer Science · GPA 3.94 / 4.0</div>
-              </div>
+        <div className="section-max" style={{ padding: "96px 24px" }}>
+          <Label>About</Label>
+          <div className="about-grid">
+            <div>
+              <p style={{ fontSize: 16, color: "#334155", lineHeight: 1.8, marginBottom: 20 }}>
+                I'm a Lead Product Manager at <strong style={{ color: INK }}>noon.com</strong>, the Middle East's largest e-commerce platform, where I own the fulfillment infrastructure that processes <strong style={{ color: INK }}>1.7M+ daily transactions</strong> across UAE, KSA, and Egypt — and the AI layer increasingly running on top of it.
+              </p>
+              <p style={{ fontSize: 16, color: "#334155", lineHeight: 1.8, marginBottom: 20 }}>
+                My craft is product at the platform level: roadmapping, PRDs, and cross-functional leadership across engineering, ops, and finance. I build systems meant to last — billing engines, serialization flows, and unified stacks that three businesses share instead of rebuilding.
+              </p>
+              <p style={{ fontSize: 16, color: "#334155", lineHeight: 1.8 }}>
+                I'm Nepali, an NYU Abu Dhabi grad, and based in Dubai. On the side I'm building <strong style={{ color: INK }}>Hamro Katha</strong> — bilingual illustrated stories for my Australian-born Nepali nephew and families like ours.
+              </p>
+            </div>
+
+            {/* Currently card */}
+            <div style={{ background: LIGHT, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 26 }}>
+              <Label>Currently</Label>
+              {[
+                { k: "Role", v: "Lead PM, noon.com — Fulfilled by Noon (FBN)" },
+                { k: "Location", v: "Dubai, UAE" },
+                { k: "Building", v: "Hamro Katha (hamrokatha.com)" },
+              ].map((row, i, arr) => (
+                <div key={row.k} style={{ display: "flex", gap: 12, padding: "16px 0", borderBottom: i < arr.length - 1 ? `1px solid ${BORDER}` : "none", alignItems: "flex-start" }}>
+                  <span style={{ color: TEAL, fontSize: 8, marginTop: 6, flexShrink: 0 }}>●</span>
+                  <div>
+                    <div style={{ fontSize: 11, color: MUTED, textTransform: "uppercase", letterSpacing: 1, fontFamily: MONO, marginBottom: 4 }}>{row.k}</div>
+                    <div style={{ fontSize: 14, color: INK, fontWeight: 500, lineHeight: 1.5 }}>{row.v}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── EXPERIENCE ───────────────────────────────────────────────────────── */}
-      <div style={{ background: BG_CARD, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}` }}>
-        <section
-          id="experience"
-          ref={expRef}
-          className={`reveal ${expVis ? "reveal-visible" : "reveal-hidden"}`}
-          style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
-        >
-          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 55% 55% at 10% 40%, ${ACCENT2_DIM} 0%, transparent 55%), radial-gradient(ellipse 40% 40% at 90% 70%, ${ACCENT_DIM} 0%, transparent 50%)`, pointerEvents: "none" }} />
+      {/* ── 4. FEATURED PRODUCTS (white) ─────────────────────────────────────── */}
+      <section
+        id="products"
+        ref={prodRef}
+        className={`reveal ${prodVis ? "reveal-visible" : "reveal-hidden"}`}
+        style={{ background: LIGHT }}
+      >
+        <div className="section-max" style={{ padding: "96px 24px" }}>
+          <Label>Featured Work</Label>
+          <Heading>Products I've shipped</Heading>
+          <p style={{ fontSize: 15, color: MUTED, marginTop: 12, marginBottom: 44 }}>Real systems, real numbers.</p>
+          <div className="products-grid">
+            {products.map((p, i) => (
+              <div key={i} className="product-card">
+                <span style={{
+                  display: "inline-block", fontSize: 11, fontWeight: 700, letterSpacing: 1,
+                  padding: "4px 11px", borderRadius: 5, marginBottom: 16,
+                  background: TEAL_DIM, color: "#0a8f78", fontFamily: MONO, textTransform: "uppercase",
+                }}>{p.tag}</span>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, lineHeight: 1.35, marginBottom: 8, fontFamily: HEAD }}>{p.title}</h3>
+                <p style={{ fontSize: 14, color: "#0a8f78", fontWeight: 600, lineHeight: 1.5, marginBottom: 18 }}>{p.impact}</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 20 }}>
+                  {p.bullets.map((b, j) => <Bullet key={j}>{b}</Bullet>)}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+                  {p.skills.map(s => (
+                    <span key={s} style={{
+                      fontSize: 11.5, padding: "5px 10px", borderRadius: 6,
+                      background: PILL_BG, color: "#475569", fontWeight: 500,
+                    }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. EXPERIENCE TIMELINE (white) ───────────────────────────────────── */}
+      <section
+        id="experience"
+        ref={expRef}
+        className={`reveal ${expVis ? "reveal-visible" : "reveal-hidden"}`}
+        style={{ background: WHITE, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}` }}
+      >
+        <div className="section-max" style={{ padding: "96px 24px" }}>
           <Label>Experience</Label>
-          <Heading style={{ marginBottom: 8 }}>APM → Lead PM in 4 years.</Heading>
-          <p style={{ fontSize: 14, color: MUTED, marginBottom: 56 }}>noon.com · Fulfilled by Noon · Jun 2021 – Present</p>
+          <Heading>Career at noon.com</Heading>
+          <p style={{ fontSize: 15, color: MUTED, marginTop: 12, marginBottom: 56 }}>APM → Lead PM in under 4 years.</p>
 
           <div className="timeline">
             {experience.map((exp, i) => (
               <div key={i} className="timeline-item">
-                <div className="timeline-dot" style={{ background: exp.current ? ACCENT : BG_CARD, borderColor: exp.current ? ACCENT : "rgba(255,255,255,0.15)" }} />
-                <div className="timeline-card" style={{ background: "rgba(10,15,30,0.6)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${exp.current ? ACCENT_BDR : BORDER}` }}>
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
-                    <div>
-                      <span style={{
-                        display: "inline-block", fontSize: 10, fontWeight: 700, letterSpacing: 1.5,
-                        padding: "3px 10px", borderRadius: 4, marginBottom: 10,
-                        background: exp.current ? ACCENT : BG_RAISED,
-                        color: exp.current ? BG : MUTED,
-                      }}>{exp.tag}</span>
-                      <div style={{ fontSize: 20, fontWeight: 700, color: TEXT }}>{exp.role}</div>
-                    </div>
-                    <span style={{ fontSize: 13, color: MUTED, fontWeight: 500, flexShrink: 0 }}>{exp.period}</span>
+                <div className="timeline-dot" style={{ background: exp.current ? TEAL : WHITE, boxShadow: `0 0 0 1px ${TEAL}` }} />
+                <div className="timeline-date">{exp.period}</div>
+                <div className="timeline-card" style={{ borderColor: exp.current ? TEAL_BDR : BORDER }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+                    <h3 style={{ fontSize: 19, fontWeight: 700, color: INK, fontFamily: HEAD }}>{exp.role}</h3>
+                    {exp.promoted && (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: TEAL, background: TEAL_DIM, padding: "3px 10px", borderRadius: 100, fontFamily: MONO }}>↑ Promoted</span>
+                    )}
+                    {exp.current && (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: AMBER, background: AMBER_DIM, border: `1px solid ${AMBER_BDR}`, padding: "3px 10px", borderRadius: 100, fontFamily: MONO }}>Current</span>
+                    )}
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                    {exp.highlights.map((h, j) => <Bullet key={j}>{h}</Bullet>)}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+                    {exp.bullets.map((b, j) => <Bullet key={j}>{b}</Bullet>)}
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </section>
-      </div>
-
-      {/* ── FEATURED WORK ────────────────────────────────────────────────────── */}
-      <section
-        id="work"
-        ref={workRef}
-        className={`reveal ${workVis ? "reveal-visible" : "reveal-hidden"}`}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
-      >
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 45% at 85% 15%, ${ACCENT_DIM} 0%, transparent 55%), radial-gradient(ellipse 40% 40% at 15% 80%, ${ACCENT2_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
-        <Label>Featured Work</Label>
-        <Heading style={{ marginBottom: 48 }}>Products I've shipped.</Heading>
-        <div className="products-grid">
-          {products.map((p, i) => (
-            <div key={i} className="product-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}` }}>
-              {/* Top accent bar */}
-              <div style={{ height: 3, background: p.tagColor }} />
-              <div style={{ padding: 28 }}>
-                {/* Tag + metric */}
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 18, gap: 12 }}>
-                  <span style={{
-                    fontSize: 10, fontWeight: 700, letterSpacing: 1.5,
-                    padding: "3px 10px", borderRadius: 4,
-                    background: `${p.tagColor}18`, color: p.tagColor,
-                  }}>{p.tag}</span>
-                  <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: ACCENT, letterSpacing: -0.5, lineHeight: 1 }}>{p.metric}</div>
-                    <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>{p.metricLabel}</div>
-                  </div>
-                </div>
-                {/* Title + desc */}
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: TEXT, lineHeight: 1.3, marginBottom: 10 }}>{p.title}</h3>
-                <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.7, marginBottom: 18 }}>{p.desc}</p>
-                {/* Bullets */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 22 }}>
-                  {p.bullets.map((b, j) => <Bullet key={j}>{b}</Bullet>)}
-                </div>
-                {/* Skill tags */}
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {p.skills.map(s => (
-                    <span key={s} style={{
-                      fontSize: 11, padding: "4px 10px", borderRadius: 4,
-                      background: BG_RAISED, color: MUTED, border: `1px solid ${BORDER}`, fontWeight: 500,
-                    }}>{s}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
-      {/* ── SKILLS ───────────────────────────────────────────────────────────── */}
-      <div style={{ background: BG_CARD, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}` }}>
-        <section
-          id="skills"
-          ref={skillsRef}
-          className={`reveal ${skillsVis ? "reveal-visible" : "reveal-hidden"}`}
-          style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
-        >
-          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 50% at 80% 30%, ${ACCENT2_DIM} 0%, transparent 55%), radial-gradient(ellipse 35% 40% at 20% 70%, ${ACCENT_DIM} 0%, transparent 50%)`, pointerEvents: "none" }} />
+      {/* ── 6. SKILLS (white) ────────────────────────────────────────────────── */}
+      <section
+        id="skills"
+        ref={skillsRef}
+        className={`reveal ${skillsVis ? "reveal-visible" : "reveal-hidden"}`}
+        style={{ background: LIGHT }}
+      >
+        <div className="section-max" style={{ padding: "96px 24px" }}>
           <Label>Skills & Tools</Label>
-          <Heading style={{ marginBottom: 48 }}>What I work with.</Heading>
+          <Heading style={{ marginBottom: 44 }}>What I work with</Heading>
           <div className="skills-grid">
             {Object.entries(skillsData).map(([cat, items]) => {
               const isAI = cat === "AI & Automation";
-              const isDomain = cat === "Domain";
-              const cardBdr = isAI ? ACCENT_BDR : isDomain ? ACCENT2_BDR : BORDER;
-              const chipBg  = isAI ? ACCENT_DIM  : isDomain ? ACCENT2_DIM  : BG_RAISED;
-              const chipClr = isAI ? ACCENT       : isDomain ? ACCENT2       : MUTED;
-              const chipBdr = isAI ? ACCENT_BDR   : isDomain ? ACCENT2_BDR   : BORDER;
               return (
-                <div key={cat} style={{ background: "rgba(10,15,30,0.5)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: 24, border: `1px solid ${cardBdr}` }}>
-                  <Label>{cat}</Label>
+                <div key={cat} style={{ background: WHITE, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 26 }}>
+                  <p style={{ fontSize: 11, letterSpacing: 1.5, fontWeight: 700, color: MUTED, marginBottom: 16, textTransform: "uppercase" }}>{cat}</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {items.map(s => (
                       <span key={s} style={{
-                        fontSize: 12, padding: "5px 12px", borderRadius: 6, fontWeight: 500,
-                        background: chipBg, color: chipClr, border: `1px solid ${chipBdr}`,
+                        fontSize: 13, padding: "6px 12px", borderRadius: 6, fontWeight: 500,
+                        background: isAI ? TEAL_DIM : PILL_BG,
+                        color: isAI ? "#0a8f78" : INK,
                       }}>{s}</span>
                     ))}
                   </div>
@@ -742,104 +709,72 @@ export default function Portfolio() {
               );
             })}
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
-      {/* ── SIDE PROJECTS ────────────────────────────────────────────────────── */}
-      <div
+      {/* ── 7. SIDE PROJECTS (white) ─────────────────────────────────────────── */}
+      <section
         ref={projRef}
         className={`reveal ${projVis ? "reveal-visible" : "reveal-hidden"}`}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
+        style={{ background: WHITE, borderTop: `1px solid ${BORDER}` }}
       >
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 55% 45% at 15% 25%, ${WARM_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
-        <Label>Side Projects</Label>
-        <Heading style={{ marginBottom: 48 }}>Beyond the day job.</Heading>
-        <div className="projects-grid">
-          {/* TL;DR Studio */}
-          <div className="project-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}`, padding: 28 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(255,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF4444" strokeWidth="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <div className="section-max" style={{ padding: "96px 24px" }}>
+          <Label>Side Projects</Label>
+          <Heading style={{ marginBottom: 44 }}>Beyond the day job</Heading>
+          <div className="projects-grid">
+            {sideProjects.map((p) => (
+              <div key={p.name} className="project-card">
+                <div style={{ width: 40, height: 40, borderRadius: 9, background: TEAL_DIM, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 18 }}>
+                  <ProjectIcon name={p.icon} />
+                </div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: INK, marginBottom: 10, fontFamily: HEAD }}>{p.name}</h3>
+                <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.7, marginBottom: 18 }}>{p.desc}</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: p.href ? 18 : 0 }}>
+                  {p.tags.map(t => (
+                    <span key={t} style={{ fontSize: 11.5, padding: "5px 10px", borderRadius: 6, background: PILL_BG, color: "#475569", fontWeight: 500 }}>{t}</span>
+                  ))}
+                </div>
+                {p.href && (
+                  <a href={p.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: TEAL, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    {p.linkLabel} <ExternalIcon />
+                  </a>
+                )}
               </div>
-              <span style={{ fontSize: 10, letterSpacing: 2, fontWeight: 700, color: MUTED }}>YOUTUBE</span>
-            </div>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: TEXT, marginBottom: 10 }}>TL;DR Studio</h3>
-            <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.75, marginBottom: 22 }}>AI-generated video explainers of top PM, strategy, and tech articles. Built with Claude and Google NotebookLM.</p>
-            <a href="https://www.youtube.com/@TLDRStudio" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: ACCENT, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
-              Watch on YouTube <ExternalIcon />
-            </a>
-          </div>
-
-          {/* Playground PM */}
-          <div className="project-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}`, padding: 28 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(79,142,247,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-              <span style={{ fontSize: 10, letterSpacing: 2, fontWeight: 700, color: MUTED }}>COMMUNITY</span>
-            </div>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: TEXT, marginBottom: 10 }}>Playground PM</h3>
-            <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.75, marginBottom: 22 }}>Internal PM community at noon.com driving AI adoption. Built automated SOP generator (Claude Code) and AskFBN bot (Google Apps Script + Gemini) to bridge knowledge gaps.</p>
-            <span style={{ fontSize: 13, color: MUTED, fontWeight: 500 }}>Internal initiative · FBN</span>
-          </div>
-
-          {/* Hamro Katha */}
-          <div className="project-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}`, padding: 28 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(220,38,38,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              </div>
-              <span style={{ fontSize: 10, letterSpacing: 2, fontWeight: 700, color: MUTED }}>PERSONAL</span>
-            </div>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: TEXT, marginBottom: 10 }}>Hamro Katha</h3>
-            <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.75, marginBottom: 22 }}>Subscription platform delivering bilingual (English/Nepali) illustrated stories to children of Nepali expat families. Inspired by my Australian-born Nepali nephew. Targets parents of 2–5 year olds across the 5M+ strong Nepali diaspora. Vibe-coded solo.</p>
-            <a href="https://hamrokatha.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: ACCENT, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
-              Visit hamrokatha.com <ExternalIcon />
-            </a>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── CONTACT ──────────────────────────────────────────────────────────── */}
-      <div style={{ background: BG_CARD, borderTop: `1px solid ${BORDER}` }}>
-        <section
-          id="contact"
-          ref={ctaRef}
-          className={`reveal ${ctaVis ? "reveal-visible" : "reveal-hidden"}`}
-          style={{ maxWidth: 760, margin: "0 auto", padding: "100px 24px", textAlign: "center", position: "relative" }}
-        >
-          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 60% 50% at 50% 80%, ${WARM_DIM} 0%, transparent 60%)`, pointerEvents: "none" }} />
-          <Label>Contact</Label>
-          <Heading style={{ marginBottom: 20 }}>Let's work together.</Heading>
-
-          {/* Availability badge */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 22px", background: WARM_DIM, border: `1px solid ${WARM_BDR}`, borderRadius: 8, marginBottom: 40 }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: WARM, display: "block", flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: WARM, fontWeight: 500 }}>Open to senior PM roles &nbsp;·&nbsp; Scale &nbsp;·&nbsp; AI &nbsp;·&nbsp; High-impact</span>
+      {/* ── 8. CONTACT (dark) ────────────────────────────────────────────────── */}
+      <section id="contact" style={{ background: NAVY, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 60% at 50% 100%, rgba(0,201,167,0.12) 0%, transparent 65%)", pointerEvents: "none" }} />
+        <div className="section-max" style={{ padding: "104px 24px", textAlign: "center", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
+            <Barcode opacity={0.4} />
           </div>
-
-          <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.75, maxWidth: 460, margin: "0 auto 52px" }}>
-            5+ years building high-scale fulfillment systems. Looking for a world-class product team where I can tackle the next hard problem.
+          <h2 style={{ fontSize: "clamp(32px,5vw,48px)", fontWeight: 700, color: HERO_TEXT, fontFamily: HEAD, letterSpacing: -1, marginBottom: 16 }}>
+            Let's work together
+          </h2>
+          <p style={{ fontSize: 16, color: HERO_MUTED, lineHeight: 1.7, maxWidth: 440, margin: "0 auto 40px" }}>
+            Open to new opportunities and collaborations.
           </p>
-
-          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 10 }}>
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 14 }}>
             {contactLinks.map(c => (
-              <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className="contact-link" style={{ background: BG, border: `1px solid ${BORDER}`, color: TEXT }}>
-                <span style={{ color: ACCENT, display: "flex" }}>{c.icon}</span>
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 10, color: MUTED, fontWeight: 500, letterSpacing: 0.5 }}>{c.label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{c.value}</div>
-                </div>
+              <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className="contact-link">
+                <span style={{ display: "flex", color: TEAL }}>{c.icon}</span>
+                {c.label}
               </a>
             ))}
           </div>
-        </section>
-      </div>
+        </div>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────────── */}
-      <div style={{ borderTop: `1px solid ${BORDER}`, padding: "20px 24px", textAlign: "center" }}>
-        <p style={{ fontSize: 12, color: MUTED }}>Aman Pandey · Built with React & Claude</p>
-      </div>
+        {/* footer */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "22px 24px", textAlign: "center", position: "relative", zIndex: 1 }}>
+          <p style={{ fontSize: 12, color: HERO_MUTED, fontFamily: MONO, letterSpacing: 0.3 }}>
+            Aman Pandey · 2026 · Built with caffeine and Claude
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
