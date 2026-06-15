@@ -18,6 +18,19 @@ const WARM_DIM    = "rgba(245,158,11,0.08)";
 const WARM_BDR    = "rgba(245,158,11,0.2)";
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
+const tickerItems = [
+  "1.7M+ inventory transactions / day",
+  "noon.com · UAE · KSA · Egypt",
+  "AI image validation · <3% false positive rate",
+  "$3.5M+ monthly seller charges processed",
+  "2.4M units transferred / month",
+  "1M+ units serialized against fraud",
+  "48× faster CCTV investigation",
+  "41-member cross-functional team",
+  "98% volumetric SKU coverage",
+  "AI seller chatbot · first in noon portal",
+];
+
 const metrics = [
   { value: "1.7M+",  label: "Daily inventory transactions" },
   { value: "$3.5M+", label: "Monthly seller charges" },
@@ -240,34 +253,89 @@ function AnimatedCounter({ value }) {
 function HeroBackground() {
   return (
     <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-      {/* Radial teal glow at top */}
+      {/* Base glows */}
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,212,170,0.1) 0%, transparent 60%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 45% at 10% 115%, rgba(245,158,11,0.1) 0%, transparent 55%)" }} />
+
+      {/* ── Logistics route map SVG ─────────────────────────────────────── */}
+      <svg
+        style={{ position: "absolute", right: 0, top: 0, width: "54%", height: "100%", opacity: 0.2, pointerEvents: "none" }}
+        viewBox="0 0 580 780"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {/* Route lines – dashed shipping lanes */}
+        <line x1="290" y1="370" x2="440" y2="230" stroke="#00d4aa" strokeWidth="1.4" strokeDasharray="6 5" />
+        <line x1="290" y1="370" x2="125" y2="275" stroke="#00d4aa" strokeWidth="1.4" strokeDasharray="6 5" />
+        <line x1="290" y1="370" x2="500" y2="460" stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="6 5" />
+        <line x1="290" y1="370" x2="175" y2="510" stroke="#818cf8" strokeWidth="1"   strokeDasharray="6 5" />
+        <line x1="290" y1="370" x2="410" y2="570" stroke="#00d4aa" strokeWidth="0.9" strokeDasharray="5 6" />
+        <line x1="290" y1="370" x2="295" y2="155" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="4 7" />
+        <line x1="440" y1="230" x2="500" y2="460" stroke="#00d4aa" strokeWidth="0.6" strokeDasharray="3 8" opacity="0.5" />
+        <line x1="125" y1="275" x2="440" y2="230" stroke="#00d4aa" strokeWidth="0.6" strokeDasharray="3 8" opacity="0.5" />
+
+        {/* Traveling package dots */}
+        <circle r="4" fill="#00d4aa"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0s"   path="M290,370 L440,230" /></circle>
+        <circle r="3.5" fill="#00d4aa"><animateMotion dur="3.6s" repeatCount="indefinite" begin="1.2s" path="M290,370 L125,275" /></circle>
+        <circle r="3"   fill="#f59e0b"><animateMotion dur="3.2s" repeatCount="indefinite" begin="0.6s" path="M290,370 L500,460" /></circle>
+        <circle r="3"   fill="#818cf8"><animateMotion dur="4.2s" repeatCount="indefinite" begin="2s"   path="M290,370 L175,510" /></circle>
+        <circle r="2.5" fill="#00d4aa"><animateMotion dur="3.8s" repeatCount="indefinite" begin="1.8s" path="M290,370 L410,570" /></circle>
+        <circle r="2.5" fill="#f59e0b"><animateMotion dur="5s"   repeatCount="indefinite" begin="0.4s" path="M290,370 L295,155" /></circle>
+
+        {/* Hub – DXB (Dubai, main warehouse cluster) */}
+        <circle cx="290" cy="370" r="26" stroke="#00d4aa" strokeWidth="0.8" fill="none" opacity="0.2" />
+        <circle cx="290" cy="370" r="14" stroke="#00d4aa" strokeWidth="0.8" fill="none" opacity="0.35" />
+        <circle cx="290" cy="370" r="6"  fill="#00d4aa" opacity="0.3" />
+        <circle cx="290" cy="370" r="3"  fill="#00d4aa" opacity="0.9" />
+        <text x="303" y="367" fill="#00d4aa" fontSize="10" fontFamily="monospace" fontWeight="700" opacity="0.95">DXB</text>
+
+        {/* Node – RUH */}
+        <circle cx="440" cy="230" r="8" fill="#00d4aa" opacity="0.12" />
+        <circle cx="440" cy="230" r="3.5" fill="#00d4aa" opacity="0.7" />
+        <text x="452" y="227" fill="#00d4aa" fontSize="9" fontFamily="monospace" opacity="0.75">RUH</text>
+
+        {/* Node – CAI */}
+        <circle cx="125" cy="275" r="8" fill="#00d4aa" opacity="0.12" />
+        <circle cx="125" cy="275" r="3.5" fill="#00d4aa" opacity="0.7" />
+        <text x="82" y="272" fill="#00d4aa" fontSize="9" fontFamily="monospace" opacity="0.75">CAI</text>
+
+        {/* Node – MCT */}
+        <circle cx="500" cy="460" r="8" fill="#f59e0b" opacity="0.12" />
+        <circle cx="500" cy="460" r="3.5" fill="#f59e0b" opacity="0.7" />
+        <text x="512" y="457" fill="#f59e0b" fontSize="9" fontFamily="monospace" opacity="0.75">MCT</text>
+
+        {/* Node – AUH */}
+        <circle cx="175" cy="510" r="7" fill="#818cf8" opacity="0.12" />
+        <circle cx="175" cy="510" r="3" fill="#818cf8" opacity="0.7" />
+        <text x="132" y="507" fill="#818cf8" fontSize="9" fontFamily="monospace" opacity="0.75">AUH</text>
+
+        {/* Node – KWT */}
+        <circle cx="410" cy="570" r="6" fill="#00d4aa" opacity="0.1" />
+        <circle cx="410" cy="570" r="2.5" fill="#00d4aa" opacity="0.6" />
+        <text x="420" y="567" fill="#00d4aa" fontSize="8" fontFamily="monospace" opacity="0.65">KWT</text>
+
+        {/* Node – AMM */}
+        <circle cx="295" cy="155" r="6" fill="#f59e0b" opacity="0.1" />
+        <circle cx="295" cy="155" r="2.5" fill="#f59e0b" opacity="0.6" />
+        <text x="306" y="152" fill="#f59e0b" fontSize="8" fontFamily="monospace" opacity="0.65">AMM</text>
+
+        {/* Data stream watermark */}
+        <text x="45" y="610" fill="#00d4aa" fontSize="8" fontFamily="monospace" opacity="0.22">1,743,291 units · today</text>
+        <text x="45" y="630" fill="#00d4aa" fontSize="8" fontFamily="monospace" opacity="0.16">STATUS: IN TRANSIT ▶</text>
+        <text x="45" y="650" fill="#f59e0b" fontSize="8" fontFamily="monospace" opacity="0.13">BATCH: OTC-20250615-4482</text>
+      </svg>
+
+      {/* Subtle dot grid – sparse, left side only */}
       <div style={{
         position: "absolute", inset: 0,
-        background: "radial-gradient(ellipse 90% 55% at 50% -5%, rgba(0,212,170,0.09) 0%, transparent 65%)",
+        backgroundImage: `radial-gradient(circle, rgba(0,212,170,0.07) 1px, transparent 1px)`,
+        backgroundSize: "56px 56px",
+        maskImage: "radial-gradient(ellipse 45% 60% at 22% 45%, black 0%, transparent 75%)",
+        WebkitMaskImage: "radial-gradient(ellipse 45% 60% at 22% 45%, black 0%, transparent 75%)",
       }} />
-      {/* Soft indigo glow right */}
-      <div style={{
-        position: "absolute", inset: 0,
-        background: "radial-gradient(ellipse 55% 50% at 90% 50%, rgba(129,140,248,0.07) 0%, transparent 60%)",
-      }} />
-      {/* Subtle dot grid */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: `radial-gradient(circle, rgba(0,212,170,0.12) 1px, transparent 1px)`,
-        backgroundSize: "48px 48px",
-        maskImage: "radial-gradient(ellipse 80% 70% at 50% 0%, black 0%, transparent 100%)",
-        WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 0%, black 0%, transparent 100%)",
-      }} />
-      {/* Warm amber glow bottom-left — emotional warmth */}
-      <div style={{
-        position: "absolute", inset: 0,
-        background: "radial-gradient(ellipse 70% 45% at 10% 115%, rgba(245,158,11,0.1) 0%, transparent 55%)",
-      }} />
-      {/* Bottom fade into BG */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
-        background: `linear-gradient(to bottom, transparent, ${BG})`,
-      }} />
+
+      {/* Bottom fade */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: `linear-gradient(to bottom, transparent, ${BG})` }} />
     </div>
   );
 }
@@ -486,8 +554,25 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* ── DATA TICKER ──────────────────────────────────────────────────── */}
+      <div style={{ overflow: "hidden", background: "rgba(0,212,170,0.03)", borderTop: `1px solid rgba(0,212,170,0.09)`, borderBottom: `1px solid rgba(0,212,170,0.09)`, padding: "11px 0" }}>
+        <div style={{ display: "flex", animation: "ticker-scroll 38s linear infinite", width: "max-content" }}>
+          {[...tickerItems, ...tickerItems].map((item, i) => (
+            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 8, whiteSpace: "nowrap", padding: "0 44px", fontSize: 11, color: ACCENT, fontFamily: "'SF Mono','Fira Code',monospace", letterSpacing: 0.5, fontWeight: 500 }}>
+              <span style={{ opacity: 0.4, fontSize: 7 }}>◆</span>
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* ── METRICS ──────────────────────────────────────────────────────────── */}
-      <div style={{ background: BG_CARD, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ background: BG_CARD, borderTop: `1px solid ${BORDER}`, borderBottom: `1px solid ${BORDER}`, position: "relative" }}>
+        {/* LIVE badge */}
+        <div style={{ position: "absolute", top: 14, right: 24, display: "flex", alignItems: "center", gap: 7, zIndex: 1 }}>
+          <span className="pulse-dot" style={{ display: "block", width: 6, height: 6, borderRadius: "50%", background: "#22c55e", flexShrink: 0 }} />
+          <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 700, letterSpacing: 2, fontFamily: "monospace" }}>LIVE OPS</span>
+        </div>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div className="metrics-grid">
             {metrics.map((m, i) => (
