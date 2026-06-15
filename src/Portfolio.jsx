@@ -13,6 +13,9 @@ const BORDER      = "rgba(255,255,255,0.07)";
 const ACCENT2     = "#818cf8";
 const ACCENT2_DIM = "rgba(129,140,248,0.07)";
 const ACCENT2_BDR = "rgba(129,140,248,0.18)";
+const WARM        = "#f59e0b";
+const WARM_DIM    = "rgba(245,158,11,0.08)";
+const WARM_BDR    = "rgba(245,158,11,0.2)";
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 const metrics = [
@@ -255,6 +258,11 @@ function HeroBackground() {
         maskImage: "radial-gradient(ellipse 80% 70% at 50% 0%, black 0%, transparent 100%)",
         WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 0%, black 0%, transparent 100%)",
       }} />
+      {/* Warm amber glow bottom-left — emotional warmth */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse 70% 45% at 10% 115%, rgba(245,158,11,0.1) 0%, transparent 55%)",
+      }} />
       {/* Bottom fade into BG */}
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
@@ -314,7 +322,7 @@ function Nav({ active, scrollTo }) {
             }}>{n.label}</button>
           ))}
           <button onClick={() => scrollTo("contact")} style={{
-            padding: "8px 20px", background: ACCENT, color: BG, border: "none", borderRadius: 6,
+            padding: "8px 20px", background: WARM, color: BG, border: "none", borderRadius: 6,
             fontSize: 13, fontWeight: 700, cursor: "pointer",
           }}>Let's Talk</button>
         </div>
@@ -344,7 +352,7 @@ function Nav({ active, scrollTo }) {
             }}>{n.label}</button>
           ))}
           <button onClick={() => handleNav("contact")} style={{
-            marginTop: 12, padding: "16px 48px", background: ACCENT, color: BG,
+            marginTop: 12, padding: "16px 48px", background: WARM, color: BG,
             border: "none", borderRadius: 10, fontSize: 18, fontWeight: 700, cursor: "pointer",
           }}>Let's Talk</button>
         </div>
@@ -449,9 +457,9 @@ export default function Portfolio() {
           {/* CTAs */}
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
             <button onClick={() => scrollTo("work")} style={{
-              padding: "14px 32px", background: ACCENT, color: BG, border: "none", borderRadius: 8,
+              padding: "14px 32px", background: WARM, color: BG, border: "none", borderRadius: 8,
               fontWeight: 700, fontSize: 15, cursor: "pointer",
-              boxShadow: "0 0 40px rgba(0,212,170,0.18)",
+              boxShadow: "0 0 40px rgba(245,158,11,0.22)",
               transition: "box-shadow 0.2s, transform 0.2s",
             }}>View My Work</button>
             <a href="/cv.pdf" download style={{
@@ -501,7 +509,7 @@ export default function Portfolio() {
         className={`reveal ${aboutVis ? "reveal-visible" : "reveal-hidden"}`}
         style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
       >
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 45% 55% at 88% 20%, ${ACCENT_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 55% at 88% 20%, ${WARM_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
         <div className="about-grid">
           <div>
             <Label>About</Label>
@@ -658,7 +666,7 @@ export default function Portfolio() {
         className={`reveal ${projVis ? "reveal-visible" : "reveal-hidden"}`}
         style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
       >
-        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 55% 45% at 15% 25%, ${ACCENT2_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 55% 45% at 15% 25%, ${WARM_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
         <Label>Side Projects</Label>
         <Heading style={{ marginBottom: 48 }}>Beyond the day job.</Heading>
         <div className="projects-grid">
@@ -713,19 +721,20 @@ export default function Portfolio() {
           id="contact"
           ref={ctaRef}
           className={`reveal ${ctaVis ? "reveal-visible" : "reveal-hidden"}`}
-          style={{ maxWidth: 760, margin: "0 auto", padding: "100px 24px", textAlign: "center" }}
+          style={{ maxWidth: 760, margin: "0 auto", padding: "100px 24px", textAlign: "center", position: "relative" }}
         >
+          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 60% 50% at 50% 80%, ${WARM_DIM} 0%, transparent 60%)`, pointerEvents: "none" }} />
           <Label>Contact</Label>
           <Heading style={{ marginBottom: 20 }}>Let's work together.</Heading>
 
           {/* Availability badge */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 22px", background: ACCENT_DIM, border: `1px solid ${ACCENT_BDR}`, borderRadius: 8, marginBottom: 40 }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: ACCENT, display: "block", flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: ACCENT, fontWeight: 500 }}>Open to senior PM roles in Australia &nbsp;·&nbsp; Subclass 482 sponsorship</span>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 22px", background: WARM_DIM, border: `1px solid ${WARM_BDR}`, borderRadius: 8, marginBottom: 40 }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: WARM, display: "block", flexShrink: 0 }} />
+            <span style={{ fontSize: 13, color: WARM, fontWeight: 500 }}>Open to senior PM roles &nbsp;·&nbsp; Scale &nbsp;·&nbsp; AI &nbsp;·&nbsp; High-impact</span>
           </div>
 
           <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.75, maxWidth: 460, margin: "0 auto 52px" }}>
-            5+ years building high-scale fulfillment systems. Ready to bring that to a world-class product team in Australia.
+            5+ years building high-scale fulfillment systems. Looking for a world-class product team where I can tackle the next hard problem.
           </p>
 
           <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 10 }}>
