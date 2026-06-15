@@ -10,6 +10,9 @@ const BG_RAISED   = "#111c32";
 const TEXT        = "#e2e8f0";
 const MUTED       = "#94a3b8";
 const BORDER      = "rgba(255,255,255,0.07)";
+const ACCENT2     = "#818cf8";
+const ACCENT2_DIM = "rgba(129,140,248,0.07)";
+const ACCENT2_BDR = "rgba(129,140,248,0.18)";
 
 // ─── Data ──────────────────────────────────────────────────────────────────────
 const metrics = [
@@ -239,6 +242,11 @@ function HeroBackground() {
         position: "absolute", inset: 0,
         background: "radial-gradient(ellipse 90% 55% at 50% -5%, rgba(0,212,170,0.09) 0%, transparent 65%)",
       }} />
+      {/* Soft indigo glow right */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse 55% 50% at 90% 50%, rgba(129,140,248,0.07) 0%, transparent 60%)",
+      }} />
       {/* Subtle dot grid */}
       <div style={{
         position: "absolute", inset: 0,
@@ -424,7 +432,7 @@ export default function Portfolio() {
           </div>
 
           {/* Name */}
-          <h1 style={{ fontSize: "clamp(56px,9vw,100px)", fontWeight: 800, lineHeight: 0.95, letterSpacing: "-3px", color: TEXT, marginBottom: 24 }}>
+          <h1 style={{ fontSize: "clamp(56px,9vw,100px)", fontWeight: 800, lineHeight: 0.95, letterSpacing: "-3px", background: `linear-gradient(135deg, ${ACCENT} 25%, ${ACCENT2} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: 24 }}>
             Aman<br />Pandey.
           </h1>
 
@@ -491,8 +499,9 @@ export default function Portfolio() {
         id="about"
         ref={aboutRef}
         className={`reveal ${aboutVis ? "reveal-visible" : "reveal-hidden"}`}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px" }}
+        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
       >
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 45% 55% at 88% 20%, ${ACCENT_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
         <div className="about-grid">
           <div>
             <Label>About</Label>
@@ -522,8 +531,9 @@ export default function Portfolio() {
           id="experience"
           ref={expRef}
           className={`reveal ${expVis ? "reveal-visible" : "reveal-hidden"}`}
-          style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px" }}
+          style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
         >
+          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 55% 55% at 10% 40%, ${ACCENT2_DIM} 0%, transparent 55%), radial-gradient(ellipse 40% 40% at 90% 70%, ${ACCENT_DIM} 0%, transparent 50%)`, pointerEvents: "none" }} />
           <Label>Experience</Label>
           <Heading style={{ marginBottom: 8 }}>APM → Lead PM in 4 years.</Heading>
           <p style={{ fontSize: 14, color: MUTED, marginBottom: 56 }}>noon.com · Fulfilled by Noon · Jun 2021 – Present</p>
@@ -532,7 +542,7 @@ export default function Portfolio() {
             {experience.map((exp, i) => (
               <div key={i} className="timeline-item">
                 <div className="timeline-dot" style={{ background: exp.current ? ACCENT : BG_CARD, borderColor: exp.current ? ACCENT : "rgba(255,255,255,0.15)" }} />
-                <div className="timeline-card" style={{ background: BG, border: `1px solid ${exp.current ? ACCENT_BDR : BORDER}` }}>
+                <div className="timeline-card" style={{ background: "rgba(10,15,30,0.6)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${exp.current ? ACCENT_BDR : BORDER}` }}>
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
                     <div>
                       <span style={{
@@ -560,13 +570,14 @@ export default function Portfolio() {
         id="work"
         ref={workRef}
         className={`reveal ${workVis ? "reveal-visible" : "reveal-hidden"}`}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px" }}
+        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
       >
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 45% at 85% 15%, ${ACCENT_DIM} 0%, transparent 55%), radial-gradient(ellipse 40% 40% at 15% 80%, ${ACCENT2_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
         <Label>Featured Work</Label>
         <Heading style={{ marginBottom: 48 }}>Products I've shipped.</Heading>
         <div className="products-grid">
           {products.map((p, i) => (
-            <div key={i} className="product-card" style={{ background: BG_CARD, border: `1px solid ${BORDER}` }}>
+            <div key={i} className="product-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}` }}>
               {/* Top accent bar */}
               <div style={{ height: 3, background: p.tagColor }} />
               <div style={{ padding: 28 }}>
@@ -610,23 +621,27 @@ export default function Portfolio() {
           id="skills"
           ref={skillsRef}
           className={`reveal ${skillsVis ? "reveal-visible" : "reveal-hidden"}`}
-          style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px" }}
+          style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
         >
+          <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 50% 50% at 80% 30%, ${ACCENT2_DIM} 0%, transparent 55%), radial-gradient(ellipse 35% 40% at 20% 70%, ${ACCENT_DIM} 0%, transparent 50%)`, pointerEvents: "none" }} />
           <Label>Skills & Tools</Label>
           <Heading style={{ marginBottom: 48 }}>What I work with.</Heading>
           <div className="skills-grid">
             {Object.entries(skillsData).map(([cat, items]) => {
               const isAI = cat === "AI & Automation";
+              const isDomain = cat === "Domain";
+              const cardBdr = isAI ? ACCENT_BDR : isDomain ? ACCENT2_BDR : BORDER;
+              const chipBg  = isAI ? ACCENT_DIM  : isDomain ? ACCENT2_DIM  : BG_RAISED;
+              const chipClr = isAI ? ACCENT       : isDomain ? ACCENT2       : MUTED;
+              const chipBdr = isAI ? ACCENT_BDR   : isDomain ? ACCENT2_BDR   : BORDER;
               return (
-                <div key={cat} style={{ background: BG, borderRadius: 12, padding: 24, border: `1px solid ${isAI ? ACCENT_BDR : BORDER}` }}>
+                <div key={cat} style={{ background: "rgba(10,15,30,0.5)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderRadius: 12, padding: 24, border: `1px solid ${cardBdr}` }}>
                   <Label>{cat}</Label>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {items.map(s => (
                       <span key={s} style={{
                         fontSize: 12, padding: "5px 12px", borderRadius: 6, fontWeight: 500,
-                        background: isAI ? ACCENT_DIM : BG_RAISED,
-                        color: isAI ? ACCENT : MUTED,
-                        border: `1px solid ${isAI ? ACCENT_BDR : BORDER}`,
+                        background: chipBg, color: chipClr, border: `1px solid ${chipBdr}`,
                       }}>{s}</span>
                     ))}
                   </div>
@@ -641,13 +656,14 @@ export default function Portfolio() {
       <div
         ref={projRef}
         className={`reveal ${projVis ? "reveal-visible" : "reveal-hidden"}`}
-        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px" }}
+        style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 24px", position: "relative" }}
       >
+        <div style={{ position: "absolute", inset: 0, background: `radial-gradient(ellipse 55% 45% at 15% 25%, ${ACCENT2_DIM} 0%, transparent 55%)`, pointerEvents: "none" }} />
         <Label>Side Projects</Label>
         <Heading style={{ marginBottom: 48 }}>Beyond the day job.</Heading>
         <div className="projects-grid">
           {/* TL;DR Studio */}
-          <div className="project-card" style={{ background: BG_CARD, border: `1px solid ${BORDER}`, padding: 28 }}>
+          <div className="project-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}`, padding: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(255,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF4444" strokeWidth="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -662,7 +678,7 @@ export default function Portfolio() {
           </div>
 
           {/* Playground PM */}
-          <div className="project-card" style={{ background: BG_CARD, border: `1px solid ${BORDER}`, padding: 28 }}>
+          <div className="project-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}`, padding: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(79,142,247,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -675,7 +691,7 @@ export default function Portfolio() {
           </div>
 
           {/* Hamro Katha */}
-          <div className="project-card" style={{ background: BG_CARD, border: `1px solid ${BORDER}`, padding: 28 }}>
+          <div className="project-card" style={{ background: "rgba(13,21,38,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", border: `1px solid ${BORDER}`, padding: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(220,38,38,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
